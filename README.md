@@ -1,5 +1,5 @@
 # Digibox
-digitalocean development box commander
+digitalocean development box cli
 
 ## Usage
 
