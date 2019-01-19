@@ -1,0 +1,37 @@
+hash: dde6a4b14ef233e201170db77baaac590ab7080348480647fe8afbb1549968d2
+updated: 2019-01-19T19:47:00.569750264+07:00
+imports:
+- name: github.com/digitalocean/godo
+  version: 360ee5cab86ffe07b3d5009a3bbb658862c55cf8
+- name: github.com/golang/protobuf
+  version: b4deda0973fb4c70b50d226b1af49f3da59f5265
+  subpackages:
+  - proto
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
+- name: github.com/tent/http-link-go
+  version: ac974c61c2f990f4115b119354b5e0b47550e888
+- name: github.com/urfave/cli
+  version: b67dcf995b6a7b7f14fad5fcb7cc5441b05e814b
+- name: golang.org/x/net
+  version: 1c05540f6879653db88113bc4a2b70aec4bd491f
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: cdc340f7c179dbbfa4afd43b7614e8fcadde4269
+  subpackages:
+  - internal
+- name: google.golang.org/appengine
+  version: 9d8544a6b2c7df9cff240fcf92d7b2f59bc13416
+  subpackages:
+  - internal
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+testImports: []

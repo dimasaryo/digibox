@@ -1,0 +1,5 @@
+package: .
+import:
+- package: github.com/urfave/cli
+- package: github.com/digitalocean/godo
+- package: golang.org/x/oauth2
