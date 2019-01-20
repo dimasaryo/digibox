@@ -88,6 +88,9 @@ func (d *DigitalOceanClient) Start(name string) error {
 		return err
 	}
 	log.Printf("Droplet has been restored %s", droplet.Name)
+	if len(droplet.Networks.V4) > 0 {
+		log.Printf("Access to droplets `ssh root@%s", droplet.Networks.V4[0].IPAddress)
+	}
 
 	// Delete snapshot
 	log.Printf("Delete snapshot %s", devboxImage.Name)
