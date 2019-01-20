@@ -102,6 +102,7 @@ func (d *DigitalOceanClient) Start(name string) error {
 // Stop Stop remote development server
 func (d *DigitalOceanClient) Stop(name string) error {
 	// Get droplet
+	log.Printf("Get droplet %s", name)
 	droplets, _, err := d.Client.Droplets.List(context.Background(), nil)
 	if err != nil {
 		return err
@@ -120,6 +121,7 @@ func (d *DigitalOceanClient) Stop(name string) error {
 	}
 
 	// Power off droplets
+	log.Printf("Power off droplet %s", name)
 	action, _, err := d.Client.DropletActions.PowerOff(context.Background(), devbox.ID)
 	if err != nil {
 		return err
@@ -131,6 +133,7 @@ func (d *DigitalOceanClient) Stop(name string) error {
 	}
 
 	// Create snapshot from current droplets
+	log.Printf("Create snapshot from droplet %s", name)
 	action, _, err = d.Client.DropletActions.Snapshot(context.Background(), devbox.ID, name)
 	if err != nil {
 		return err
@@ -142,41 +145,35 @@ func (d *DigitalOceanClient) Stop(name string) error {
 	}
 
 	// Delete droplets
+	log.Printf("Delete droplet %s", name)
 	_, err = d.Client.Droplets.Delete(context.Background(), devbox.ID)
 	if err != nil {
 		return err
 	}
-	log.Printf("Droplet %s was deleted.", name)
+	log.Printf("Droplet %s was deleted", name)
 	return nil
 }
 
 func (d *DigitalOceanClient) waitForAction(devboxID, actionID int) error {
-	buff := make(chan *godo.Action, 1)
-	go func() {
-		time.Sleep(1 * time.Second)
-		action, _, err := d.Client.DropletActions.Get(context.Background(), devboxID, actionID)
-		if err != nil {
-			return
-		}
+	waitTimeout := time.NewTimer(time.Duration(10) * time.Minute)
+	defer waitTimeout.Stop()
+	tick := time.Tick(15 * time.Second)
+	for {
+		select {
+		case <-waitTimeout.C:
+			return fmt.Errorf("Timeout after 10 minutes")
+		case <-tick:
+			action, _, _ := d.Client.DropletActions.Get(context.Background(), devboxID, actionID)
 
-		if action.Status == "errored" {
-			buff <- action
-		}
+			log.Printf("Status for action %s is %s", action.Type, action.Status)
+			if action.Status == "errored" {
+				return fmt.Errorf("Error occured when doing action %s", action.Type)
+			}
 
-		if action.Status == "completed" {
-			buff <- action
+			if action.Status == "completed" {
+				log.Printf("Action %s is completed at %s", action.Type, action.CompletedAt.String())
+				return nil
+			}
 		}
-	}()
-
-	select {
-	case action := <-buff:
-		if action.Status == "errored" {
-			return fmt.Errorf("Error occured when doing action %s", action.Type)
-		}
-
-		log.Printf("Action %s is completed at %s", action.Type, action.CompletedAt.String())
-		return nil
-	case <-time.After(10 * time.Minute):
-		return fmt.Errorf("Timeout after 10 minutes")
 	}
 }
