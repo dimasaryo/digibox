@@ -49,7 +49,7 @@ func main() {
 				}
 
 				log.Printf("Stop remote development server")
-				err := doClient.Stop()
+				err := doClient.Stop(c.Args().Get(0))
 				if err != nil {
 					log.Fatal(err)
 					return err
